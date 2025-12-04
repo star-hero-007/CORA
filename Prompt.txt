@@ -1,0 +1,511 @@
+# Comprehensive Prompt for Synthetic Airline Customer Churn Dataset Generation
+
+Generate a realistic synthetic airline customer churn dataset with **10,000 rows** based on the feature specifications below. The dataset must be statistically plausible, properly balanced, and reflect real-world airline customer behavior patterns.
+
+---
+
+## Core Requirements
+
+### 1. Class Balance
+- **Target Variable**: `Churned` (binary: 0 = Active, 1 = Churned)
+- **Distribution**: 50% churned (5,000), 50% active (5,000)
+- Ensure churn is distributed naturally across all demographic segments and loyalty tiers
+
+### 2. Statistical Realism
+- Features must exhibit realistic correlations (e.g., high loyalty tier correlates with more flights, longer engagement)
+- Include natural variance and noise to avoid artificial patterns
+- Temporal features should follow realistic travel seasonality patterns
+- Avoid deterministic relationships between features
+
+### 3. Demographic Diversity & Balance
+- **Age Bands**: Distribute evenly across 18-25, 26-35, 36-45, 46-55, 56-65, 65+ (16.67% each)
+- **Home Regions**: North America (25%), Europe (25%), Asia-Pacific (25%), Middle East (15%), Latin America (10%)
+- **Traveller Types**: Business (40%), Leisure (45%), Mixed (15%)
+- **Income Segments**: Low (20%), Medium (50%), High (30%)
+
+---
+
+## Feature Specifications
+
+### **Passenger Profile & Seasonality**
+
+1. **Passenger_Demographic_Segment** (categorical)
+   - Combine: `Age_Band` + `Home_Region` + `Traveller_Type` + `Income_Segment`
+   - Example: "36-45_Europe_Business_High"
+
+2. **Age_Band** (categorical): 18-25, 26-35, 36-45, 46-55, 56-65, 65+
+
+3. **Home_Region** (categorical): North America, Europe, Asia-Pacific, Middle East, Latin America
+
+4. **Traveller_Type** (categorical): Business, Leisure, Mixed
+
+5. **Income_Segment** (categorical): Low, Medium, High
+
+6. **Seasonal_Behaviour_Adjustment** (float, -50 to +30)
+   - Negative values indicate decline vs. seasonal baseline
+   - Values < -20 strongly predict churn
+   - Distribution: mean = -5, sd = 15
+
+---
+
+### **Travel & Transaction Behaviour (Dynamic)**
+
+7. **Rolling_Flights_7_Days** (integer, 0-3)
+   - Most = 0, rare business travelers = 1-3
+
+8. **Rolling_Flights_30_Days** (integer, 0-8)
+   - Distribution: median = 1, mean = 1.5
+
+9. **Rolling_Flights_90_Days** (integer, 0-15)
+   - Active customers: 3-15, Churned: 0-2
+
+10. **Rolling_Flights_180_Days** (integer, 0-30)
+    - Active customers: 5-30, Churned: 0-5
+
+11. **Booking_Intent_Drop** (float, -80 to +20)
+    - Ratio change (%) in searches-to-bookings vs. baseline
+    - Values < -30 indicate churn risk
+    - Distribution: mean = -10, sd = 25
+
+12. **Loyalty_Redemption_Trend** (float, -70 to +40)
+    - Change (%) in redemption activity vs. historical
+    - Negative = declining loyalty
+    - Distribution: mean = -5, sd = 20
+
+---
+
+### **Engagement & Digital Signals (Dynamic)**
+
+13. **App_Web_Engagement_Slope** (float, -2.0 to +1.0)
+    - Time-series slope of login frequency
+    - Negative = disengagement
+    - Churned customers: typically -1.5 to -0.3
+
+14. **Email_Offer_Engagement_Decline** (float, -90 to +10)
+    - Change (%) in open rate & CTR vs. benchmark
+    - Values < -40 strongly predict churn
+    - Distribution: mean = -15, sd = 25
+
+---
+
+### **Service Experience & Emotion**
+
+15. **Support_Ticket_Momentum** (float, 0 to 100)
+    - Weighted score of recent ticket clustering
+    - High values (>60) = frustration spike
+    - Sudden drop to 0 after high values = silent churn
+    - Distribution: median = 10, 90th percentile = 65
+
+16. **Delay_Rate_Percent** (float, 0 to 100)
+    - % of flights delayed
+    - Distribution: mean = 25, sd = 18
+    - Values > 50% increase churn likelihood
+
+17. **Cancellation_Count** (integer, 0-8)
+    - Distribution: 70% have 0, mean = 0.5
+    - Values ≥ 2 strongly predict churn
+
+18. **Baggage_Mishandling_Count** (integer, 0-5)
+    - Distribution: 80% have 0, mean = 0.3
+    - Any value > 0 increases churn risk
+
+19. **Support_Ticket_Count_6_12M** (integer, 0-15)
+    - Distribution: median = 2, mean = 3
+    - Very high (>8) or zero after past issues = churn risk
+
+20. **Avg_Resolution_Time_Hours** (float, 0.5 to 168)
+    - Distribution: median = 24, mean = 36
+    - Values > 72 hours predict churn
+
+---
+
+### **Churn (Core Behaviour)**
+
+21. **Days_Since_Last_Flight** (integer, 0-730)
+    - Active customers: 0-90 days
+    - Churned customers: 180-730 days
+    - Distribution should reflect realistic travel gaps
+
+22. **Flights_Last_3_Months** (integer, 0-12)
+    - Active: 2-12, Churned: 0-1
+
+23. **Loyalty_Tier** (categorical): Bronze (40%), Silver (30%), Gold (20%), Platinum (10%)
+
+24. **Tier_Downgrade_Indicator** (binary: 0/1)
+    - 15% of all customers, 30% of churned customers
+
+---
+
+### **Digital Engagement**
+
+25. **Days_Since_Last_Login** (integer, 0-365)
+    - Active: 0-30 days
+    - Churned: 60-365 days
+
+---
+
+### **Transactions & Refunds**
+
+26. **Refund_Count** (integer, 0-6)
+    - Distribution: 75% have 0, mean = 0.4
+    - Values ≥ 2 indicate dissatisfaction
+
+---
+
+### **Ancillary Behaviour**
+
+27. **Ancillary_Purchase_Count** (integer, 0-20)
+    - Active customers: mean = 6
+    - Churned customers: mean = 1
+
+---
+
+### **Composite Indicators**
+
+28. **Disruption_Stress_Score** (float, 0-100)
+    - Weighted: `(Delay_Rate × 0.3) + (Cancellation_Count × 15) + (Baggage_Mishandling × 20)`
+    - Values > 60 strongly predict churn
+
+29. **Behavioural_Drift_Score** (float, 0-100)
+    - Composite of deviations across travel, spend, engagement
+    - Values > 70 indicate high churn risk
+    - Distribution: mean = 35, sd = 22
+
+30. **Engagement_Trend_Index** (float, -3.0 to +2.0)
+    - Multi-channel engagement trend
+    - Negative = fading engagement
+    - Churned: typically -2.5 to -0.5
+
+---
+
+## Critical Correlation Rules
+
+1. **Loyalty Tier correlations**:
+   - Higher tiers → more flights, higher ancillary purchases, lower Days_Since_Last_Flight
+   - Platinum/Gold churn primarily after service disruptions (high Disruption_Stress_Score)
+
+2. **Churn patterns**:
+   - Churned customers: low Rolling_Flights, high Days_Since_Last_Flight, negative engagement slopes
+   - Active customers: regular flight activity, recent logins, positive/neutral trends
+
+3. **Service experience**:
+   - Multiple cancellations/delays → higher Support_Ticket_Count → higher churn probability
+   - Long resolution times amplify churn risk
+
+4. **Digital disengagement precedes flight churn**:
+   - Days_Since_Last_Login should increase before Days_Since_Last_Flight increases
+
+---
+
+## Output Format
+
+CSV file with 10,000 rows and 31 columns (30 features + 1 target variable `Churned`). Include header row with exact feature names as specified above.
+
+
+
+
+
+
+
+
+
+
+
+Generate a challenging, realistic synthetic airline customer churn test dataset with 200 rows based on the feature specifications below. This test set must be deliberately designed to challenge machine learning models by including edge cases, ambiguous patterns, and counter-intuitive scenarios that reflect real-world complexity.
+
+Core Requirements for Challenging Test Data
+1. Class Balance
+
+Target Variable: Churned (binary: 0 = Active, 1 = Churned)
+Distribution: 50% churned (100), 50% active (100)
+
+2. Deliberate Complexity & Ambiguity
+The test set should include:
+
+Contradictory signals: Customers with mixed positive/negative indicators
+Edge cases: Boundary conditions that are difficult to classify
+Anomalous patterns: Customers who defy typical churn profiles
+Subtle distinctions: Cases where churned and active customers look very similar
+Feature interactions: Complex multi-feature patterns rather than single obvious predictors
+
+3. Challenging Scenario Types (Include All)
+Type A: High-Risk Active Customers (20 rows)
+
+Show strong churn signals BUT remain active
+Examples:
+
+High Days_Since_Last_Flight (120-150) but just booked multiple future flights
+Poor service experience but high loyalty tier with recent engagement spike
+Negative engagement trends but sudden recent activity burst
+Multiple complaints but increasing ancillary purchases
+
+
+
+Type B: Low-Risk Churned Customers (20 rows)
+
+Show positive engagement signals BUT actually churned
+Examples:
+
+Recent login activity but no bookings (browsing competitors)
+Good service history but silent churn after tier downgrade
+High email engagement but zero flight activity
+Moderate flight history but abrupt stop with no warning signals
+
+
+
+Type C: Borderline Cases (40 rows)
+
+Features that hover exactly at decision boundaries
+Examples:
+
+Days_Since_Last_Flight = 90-120 (ambiguous zone)
+Exactly 1 flight in last 3 months (could go either way)
+Moderate disruption scores (40-50 range)
+Flat engagement trends (slope near 0)
+
+
+
+Type D: Contradictory Multi-Feature Patterns (30 rows)
+
+Strong positive signals in some dimensions, strong negative in others
+Examples:
+
+High loyalty tier + frequent past flights BUT long gap + zero engagement
+Excellent service experience BUT dramatic booking intent drop
+Active digital engagement BUT declining flight activity
+High ancillary purchases on last trip BUT no activity since
+
+
+
+Type E: Seasonal/Situational Ambiguity (20 rows)
+
+Patterns that could be explained by legitimate reasons vs. churn
+Examples:
+
+Business travelers with natural 4-6 month gaps between busy periods
+Leisure travelers with annual vacation patterns
+Recent life events (could be temporary pause or permanent churn)
+Geographic seasonality effects
+
+
+
+Type F: Premium Customer Edge Cases (20 rows)
+
+Platinum/Gold tier customers with unusual patterns
+Examples:
+
+Platinum churned after single major service failure
+Gold tier with declining activity but still above Bronze baseline
+Recent tier achievers with unstable behavior
+High-value customers switching to competitor while maintaining minimal activity
+
+
+
+Type G: Silent Churn vs. Natural Gaps (30 rows)
+
+Difficult to distinguish between temporary inactivity and true churn
+Examples:
+
+Moderate gaps (60-150 days) with no clear indicators either way
+Past irregular travelers now in gap period
+Low engagement but no negative service experiences
+Gradual, slow decline vs. sudden drop
+
+
+
+Type H: Noise and Outliers (20 rows)
+
+Statistical outliers and unusual combinations
+Examples:
+
+Extreme values in single features but normal otherwise
+Very frequent flyers who suddenly stop
+Near-zero activity customers who are actually active (new signups)
+Data quality issues simulation (missing patterns, inconsistencies)
+
+
+
+
+Feature Specifications (Same as Training)
+Passenger Profile & Seasonality
+
+Passenger_Demographic_Segment (categorical)
+Age_Band (categorical): 18-25, 26-35, 36-45, 46-55, 56-65, 65+
+Home_Region (categorical): North America, Europe, Asia-Pacific, Middle East, Latin America
+Traveller_Type (categorical): Business, Leisure, Mixed
+Income_Segment (categorical): Low, Medium, High
+Seasonal_Behaviour_Adjustment (float, -50 to +30)
+
+Challenge: Include values near thresholds (-15 to -25 range) that are ambiguous
+
+
+
+Travel & Transaction Behaviour (Dynamic)
+
+Rolling_Flights_7_Days (integer, 0-3)
+Rolling_Flights_30_Days (integer, 0-8)
+Rolling_Flights_90_Days (integer, 0-15)
+Rolling_Flights_180_Days (integer, 0-30)
+
+Challenge: Include inconsistent patterns (e.g., high 180-day but zero 90-day)
+
+
+Booking_Intent_Drop (float, -80 to +20)
+
+Challenge: High drops with maintained flight activity, or low drops with churn
+
+
+Loyalty_Redemption_Trend (float, -70 to +40)
+
+Challenge: Positive trends for churned, negative for active customers
+
+
+
+Engagement & Digital Signals (Dynamic)
+
+App_Web_Engagement_Slope (float, -2.0 to +1.0)
+
+Challenge: Near-zero slopes, or contradicting flight behavior
+
+
+Email_Offer_Engagement_Decline (float, -90 to +10)
+
+Challenge: High email engagement with zero flight activity
+
+
+
+Service Experience & Emotion
+
+Support_Ticket_Momentum (float, 0 to 100)
+
+Challenge: High momentum with continued loyalty, or zero momentum churn
+
+
+Delay_Rate_Percent (float, 0 to 100)
+Cancellation_Count (integer, 0-8)
+Baggage_Mishandling_Count (integer, 0-5)
+Support_Ticket_Count_6_12M (integer, 0-15)
+Avg_Resolution_Time_Hours (float, 0.5 to 168)
+
+Challenge: Poor service experience with continued loyalty, or good experience with churn
+
+
+
+Churn (Core Behaviour)
+
+Days_Since_Last_Flight (integer, 0-730)
+
+Challenge: Focus on 60-180 day range (ambiguous zone)
+Include churned at 70 days and active at 150 days
+
+
+Flights_Last_3_Months (integer, 0-12)
+
+Challenge: 1-2 flights (boundary cases)
+
+
+Loyalty_Tier (categorical): Bronze, Silver, Gold, Platinum
+
+Challenge: Over-represent Gold/Platinum in test set (30% vs 30% in training)
+
+
+Tier_Downgrade_Indicator (binary: 0/1)
+
+Challenge: Include downgrades who stayed active and non-downgrades who churned
+
+
+
+Digital Engagement
+
+Days_Since_Last_Login (integer, 0-365)
+
+Challenge: Recent logins with churned status, or long gaps with active status
+
+
+
+Transactions & Refunds
+
+Refund_Count (integer, 0-6)
+
+Challenge: Multiple refunds with continued activity
+
+
+
+Ancillary Behaviour
+
+Ancillary_Purchase_Count (integer, 0-20)
+
+Challenge: High purchases then sudden stop, or low purchases with maintained flights
+
+
+
+Composite Indicators
+
+Disruption_Stress_Score (float, 0-100)
+
+Challenge: High stress scores (60-80) with both churned and active outcomes
+
+
+Behavioural_Drift_Score (float, 0-100)
+
+Challenge: Mid-range scores (50-70) with mixed outcomes
+
+
+Engagement_Trend_Index (float, -3.0 to +2.0)
+
+Challenge: Slightly negative trends (-0.5 to -1.0) for both classes
+
+
+
+
+Specific Challenge Requirements
+1. Reduced Feature-Target Correlation
+
+Weaken the predictive power of individual features by 30-40%
+Example: If Days_Since_Last_Flight > 180 predicts churn 95% in training, make it 60-70% in test
+
+2. Increased Feature Noise
+
+Add 15-20% more variance to continuous features
+Include measurement errors and inconsistencies
+
+3. Counter-Intuitive Patterns
+
+At least 25% of rows should have "surprising" labels given their features
+Force models to rely on complex interactions rather than simple rules
+
+4. Balanced Difficulty Distribution
+- Easy cases (clear signals): 15% (30 rows)
+- Medium cases (some ambiguity): 35% (70 rows)
+- Hard cases (very ambiguous): 35% (70 rows)
+- Very hard cases (counter-intuitive): 15% (30 rows)
+5. Feature Interaction Emphasis
+
+Create scenarios where churn can ONLY be predicted by combining 3+ features
+Single features should be unreliable predictors
+
+6. Demographic Distribution Shift
+
+Slightly different from training distribution to test generalization:
+
+Business travelers: 50% (vs 40% training)
+Platinum/Gold: 35% (vs 30% training)
+Age 36-55: 40% (vs 33% training)
+
+
+
+
+Output Format
+CSV file with 200 rows and 31 columns (30 features + 1 target variable Churned). Include header row with exact feature names.
+
+Quality Checks for Test Set
+The generated test set should satisfy:
+
+✓ No single feature should have >70% correlation with churn
+✓ At least 40% of rows should have contradictory signals across features
+✓ Distribution of continuous features should overlap significantly between classes
+✓ Include at least 10 "near-impossible" cases that even humans would struggle to classify
+✓ Feature importance ranking should differ from training set
+✓ Model accuracy should be expected to drop 10-20% compared to training/validation performance
+
+This test set will effectively evaluate model robustness, generalization, and ability to handle real-world complexity rather than just memorizing obvious patterns.
